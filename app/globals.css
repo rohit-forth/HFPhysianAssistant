@@ -80,3 +80,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+body {
+  height: 100% !important;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--secondary));
+  border-radius: 10px;
+}

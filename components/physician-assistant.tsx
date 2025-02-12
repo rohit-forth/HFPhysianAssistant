@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Textarea } from '@/components/ui/textarea';
+import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+// import { ScrollArea } from "@/components/ui/scroll-area";
+// import { Textarea } from "@/components/ui/textarea";
 import {
   Mic,
   MicOff,
@@ -14,8 +14,9 @@ import {
   Check,
   Loader2,
   Eraser,
-} from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useAutosizeTextArea } from "./AutoSizeTextArea";
 
 interface DeepgramRefs {
   mediaRecorder: MediaRecorder | null;
@@ -27,7 +28,7 @@ interface DeepgramRefs {
 export function PhysicianAssistant() {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [copied, setCopied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -35,6 +36,14 @@ export function PhysicianAssistant() {
   const lastCallRef = useRef(Date.now());
   const { toast } = useToast();
 
+  const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
+  const [triggerAutoSize, setTriggerAutoSize] = React.useState("");
+  useAutosizeTextArea({
+    textAreaRef,
+    triggerAutoSize: triggerAutoSize,
+    minHeight: 100,
+    maxHeight: 200,
+  });
   const refs = useRef<DeepgramRefs>({
     mediaRecorder: null,
     socket: null,
@@ -44,7 +53,7 @@ export function PhysicianAssistant() {
 
   const cleanup = async () => {
     try {
-      if (refs.current.mediaRecorder?.state !== 'inactive') {
+      if (refs.current.mediaRecorder?.state !== "inactive") {
         refs.current.mediaRecorder?.stop();
       }
 
@@ -53,7 +62,7 @@ export function PhysicianAssistant() {
       }
 
       if (refs.current.stream) {
-        refs.current.stream.getTracks().forEach(track => track.stop());
+        refs.current.stream.getTracks().forEach((track) => track.stop());
       }
 
       refs.current = {
@@ -64,7 +73,7 @@ export function PhysicianAssistant() {
       };
       isTranscriptionInitialized.current = false;
     } catch (error) {
-      console.error('Cleanup error:', error);
+      console.error("Cleanup error:", error);
     }
   };
 
@@ -99,30 +108,32 @@ export function PhysicianAssistant() {
 
       // Create MediaRecorder
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm',
+        mimeType: "audio/webm",
       });
       refs.current.mediaRecorder = mediaRecorder;
 
       // Create WebSocket connection to Deepgram
-      const socket = new WebSocket('wss://api.deepgram.com/v1/listen', [
-        'token',
-        'c7f2be50ae5262222eb302d1b47a8099e476b306',
+      const socket = new WebSocket("wss://api.deepgram.com/v1/listen", [
+        "token",
+        "d3ec5b8d86c1f5ff95bc89aee2aad135eb8b059f",
       ]);
 
       socket.onopen = () => {
-        console.log('WebSocket connection established');
-        socket.send(JSON.stringify({
-          type: 'Configure',
-          model: 'nova-2',
-          language: 'en-US',
-          smart_format: true,
-          interim_results: true,
-          utterance_end_ms: 1000,
-          vad_events: true,
-          endpointing: 500,
-        }));
+        console.log("WebSocket connection established");
+        socket.send(
+          JSON.stringify({
+            type: "Configure",
+            model: "nova-2",
+            language: "en-US",
+            smart_format: true,
+            interim_results: true,
+            utterance_end_ms: 1000,
+            vad_events: true,
+            endpointing: 500,
+          })
+        );
 
-        mediaRecorder.addEventListener('dataavailable', (event) => {
+        mediaRecorder.addEventListener("dataavailable", (event) => {
           if (socket.readyState === WebSocket.OPEN && event.data.size > 0) {
             socket.send(event.data);
           }
@@ -135,11 +146,11 @@ export function PhysicianAssistant() {
 
       socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        const transcript = data.channel?.alternatives?.[0]?.transcript || '';
+        const transcript = data.channel?.alternatives?.[0]?.transcript || "";
 
         if (data.is_final && transcript) {
           refs.current.transcripts.push(transcript);
-          setText(prev => prev + (prev ? ' ' : '') + transcript);
+          setText((prev) => prev + (prev ? " " : "") + transcript);
           if (textareaRef.current) {
             textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
           }
@@ -147,7 +158,7 @@ export function PhysicianAssistant() {
       };
 
       socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        console.error("WebSocket error:", error);
         toast({
           title: "Error",
           description: "Transcription error occurred. Please try again.",
@@ -157,16 +168,16 @@ export function PhysicianAssistant() {
       };
 
       socket.onclose = () => {
-        console.log('WebSocket connection closed');
+        console.log("WebSocket connection closed");
       };
 
       refs.current.socket = socket;
-
     } catch (error) {
       console.error("Error initializing microphone or WebSocket:", error);
       toast({
         title: "Error",
-        description: "Failed to start recording. Please check microphone permissions.",
+        description:
+          "Failed to start recording. Please check microphone permissions.",
         variant: "destructive",
       });
       setIsProcessing(false);
@@ -230,7 +241,7 @@ export function PhysicianAssistant() {
   };
 
   const handleClear = () => {
-    setText('');
+    setText("");
     toast({
       title: "Cleared",
       description: "Text has been cleared.",
@@ -244,23 +255,33 @@ export function PhysicianAssistant() {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto mt-auto">
+    <div className="max-w-3xl mt-[calc(100vh-50vh)] mx-auto ">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 rounded-lg p-6 shadow-xl border border-gray-700"
+        className=" rounded-lg outline-none pb-10 p-2 bg-gray-900  relative"
       >
-        <ScrollArea className="h-[200px] w-full rounded-md border border-gray-700 bg-gray-900 p-4">
-          <Textarea
+        {/* <Textarea
             ref={textareaRef}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Start recording or type your medical notes here..."
-            className="min-h-[380px] resize-none bg-transparent border-none focus-visible:ring-0 text-gray-200 overflow-hidden"
-          />
-        </ScrollArea>
+            className="max-h-[200px] relative resize-none bg-transparent border-none focus-visible:ring-0 text-gray-200 overflow-hidden"
+            /> */}
+        {/* <Textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          className="bg-gray-900 min-h-[400px] max-h-[500px] text-gray-200 border-none focus-visible:ring-0"
+          ref={textAreaRef}
+          /> */}
+        <textarea
+          className="p-4 pb-18 block rounded-lg w-full border-0 bg-gray-900  text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 focus-visible:no-underline outline-none"
+          placeholder="Start recording or type your medical notes here..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          ref={textAreaRef}
+        ></textarea>
 
-        <div className="mt-4 flex items-center justify-between gap-2 flex-wrap">
+        <div className="absolute bottom-px inset-x-px p-2 px-4 rounded-b-lg bg-gray-900 dark:bg-neutral-900 flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-2">
             <AnimatePresence mode="wait">
               {!isRecording ? (
@@ -274,14 +295,13 @@ export function PhysicianAssistant() {
                     onClick={handleStartRecording}
                     disabled={isProcessing}
                     variant="default"
-                    className="bg-red-600 hover:bg-red-700"
+                    className="bg-red-600 rounded-full px-3 hover:bg-red-700"
                   >
                     {isProcessing ? (
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      <Mic className="h-4 w-4 mr-2" />
+                      <Mic className="h-4 w-4 " />
                     )}
-                    Record
                   </Button>
                 </motion.div>
               ) : (
@@ -294,34 +314,30 @@ export function PhysicianAssistant() {
                   <Button
                     onClick={handleStopRecording}
                     variant="destructive"
-                    className={isRecording && !isPaused ? 'animate-pulse' : ''}
+                    className={`px-3 rounded-full ${
+                      isRecording && !isPaused ? "animate-pulse" : ""
+                    }`}
                   >
-                    <MicOff className="h-4 w-4 mr-2" />
-                    Stop
+                    <MicOff className="h-4 w-4" />
                   </Button>
                 </motion.div>
               )}
             </AnimatePresence>
 
             {isRecording && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-              >
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
                 <Button
                   onClick={handlePauseResume}
                   variant="secondary"
-                  className="bg-gray-700 hover:bg-gray-600"
+                  className="bg-gray-700 rounded-full px-3 hover:bg-gray-600"
                 >
                   {isPaused ? (
                     <>
-                      <Play className="h-4 w-4 mr-2" />
-                      Resume
+                      <Play className="h-4 w-4" />
                     </>
                   ) : (
                     <>
-                      <Pause className="h-4 w-4 mr-2" />
-                      Pause
+                      <Pause className="h-4 w-4 " />
                     </>
                   )}
                 </Button>
@@ -333,24 +349,23 @@ export function PhysicianAssistant() {
             <Button
               onClick={handleClear}
               variant="ghost"
-              className="text-gray-400"
+              className="text-gray-400 px-3 rounded-full"
               disabled={!text || isRecording}
             >
-              <Eraser className="h-4 w-4 mr-2" />
-              Clear
+              <Eraser className="h-4 w-4" />
             </Button>
             <Button
               onClick={handleCopy}
               variant="secondary"
-              className="bg-gray-700 hover:bg-gray-600"
+              className="bg-gray-700 px-3 rounded-full hover:bg-gray-600"
               disabled={!text}
             >
               {copied ? (
-                <Check className="h-4 w-4 mr-2" />
+                <Check className="h-4 w-4" />
               ) : (
-                <Copy className="h-4 w-4 mr-2" />
+                <Copy className="h-4 w-4" />
               )}
-              {copied ? 'Copied!' : 'Copy'}
+              {/* {copied ? "Copied!" : "Copy"} */}
             </Button>
           </div>
         </div>
@@ -362,7 +377,7 @@ export function PhysicianAssistant() {
           animate={{ opacity: 1 }}
           className="mt-4 text-center text-sm text-gray-400"
         >
-          {isPaused ? 'Recording paused' : 'Recording in progress...'}
+          {isPaused ? "Recording paused" : "Recording in progress..."}
         </motion.div>
       )}
     </div>
