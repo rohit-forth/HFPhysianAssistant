@@ -1,3 +1,4 @@
+"use client";
 import { PhysicianAssistant } from "@/components/physician-assistant";
 
 export default function Home() {

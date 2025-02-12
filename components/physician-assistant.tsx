@@ -14,9 +14,17 @@ import {
   Check,
   Loader2,
   Eraser,
+  StopCircle,
+  CirclePause,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAutosizeTextArea } from "./AutoSizeTextArea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 interface DeepgramRefs {
   mediaRecorder: MediaRecorder | null;
@@ -84,6 +92,7 @@ export function PhysicianAssistant() {
         title: "Please wait",
         description: "Too many requests. Please wait a moment.",
         variant: "destructive",
+        duration: 2000,
       });
       return;
     }
@@ -163,6 +172,7 @@ export function PhysicianAssistant() {
           title: "Error",
           description: "Transcription error occurred. Please try again.",
           variant: "destructive",
+          duration: 2000,
         });
         handleStopRecording();
       };
@@ -179,6 +189,7 @@ export function PhysicianAssistant() {
         description:
           "Failed to start recording. Please check microphone permissions.",
         variant: "destructive",
+        duration: 2000,
       });
       setIsProcessing(false);
       await cleanup();
@@ -200,6 +211,7 @@ export function PhysicianAssistant() {
         title: "Error",
         description: "Failed to stop recording properly.",
         variant: "destructive",
+        duration: 2000,
       });
     }
   };
@@ -219,6 +231,7 @@ export function PhysicianAssistant() {
       description: isPaused
         ? "Speech-to-text conversion has been resumed."
         : "Speech-to-text conversion has been paused.",
+      duration: 2000,
     });
   };
 
@@ -230,12 +243,14 @@ export function PhysicianAssistant() {
       toast({
         title: "Copied!",
         description: "Text has been copied to clipboard.",
+        duration: 2000,
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to copy text. Please try again.",
         variant: "destructive",
+        duration: 2000,
       });
     }
   };
@@ -245,6 +260,7 @@ export function PhysicianAssistant() {
     toast({
       title: "Cleared",
       description: "Text has been cleared.",
+      duration: 2000,
     });
   };
 
@@ -291,18 +307,25 @@ export function PhysicianAssistant() {
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <Button
-                    onClick={handleStartRecording}
-                    disabled={isProcessing}
-                    variant="default"
-                    className="bg-red-600 rounded-full px-3 hover:bg-red-700"
-                  >
-                    {isProcessing ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Mic className="h-4 w-4 " />
-                    )}
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Button
+                          onClick={handleStartRecording}
+                          disabled={isProcessing}
+                          variant="default"
+                          className="bg-red-600 rounded-full px-3 hover:bg-red-700"
+                        >
+                          {isProcessing ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Mic className="h-4 w-4 " />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Start Recording</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </motion.div>
               ) : (
                 <motion.div
@@ -311,62 +334,93 @@ export function PhysicianAssistant() {
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <Button
-                    onClick={handleStopRecording}
-                    variant="destructive"
-                    className={`px-3 rounded-full ${
-                      isRecording && !isPaused ? "animate-pulse " : ""
-                    }`}
-                  >
-                    <MicOff className="h-4 w-4" />
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Button
+                          onClick={handleStopRecording}
+                          variant="destructive"
+                          className={`px-3 rounded-full ${
+                            isRecording && !isPaused ? "animate-pulse " : ""
+                          }`}
+                        >
+                          <CirclePause className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Stop Recording</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </motion.div>
               )}
             </AnimatePresence>
 
             {isRecording && (
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                <Button
-                  onClick={handlePauseResume}
-                  variant="secondary"
-                  className="bg-gray-700 rounded-full px-3 hover:bg-gray-600"
-                >
-                  {isPaused ? (
-                    <>
-                      <Play className="h-4 w-4" />
-                    </>
-                  ) : (
-                    <>
-                      <Pause className="h-4 w-4 " />
-                    </>
-                  )}
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Button
+                        onClick={handlePauseResume}
+                        variant="secondary"
+                        className="bg-gray-700 rounded-full px-3 hover:bg-gray-600"
+                      >
+                        {isPaused ? (
+                          <>
+                            <Play className="h-4 w-4" />
+                          </>
+                        ) : (
+                          <>
+                            <Pause className="h-4 w-4 " />
+                          </>
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {isPaused ? "Resume Recording" : "Pause Recording"}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </motion.div>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              onClick={handleClear}
-              variant="ghost"
-              className="text-gray-400 px-3 rounded-full"
-              disabled={!text || isRecording}
-            >
-              <Eraser className="h-4 w-4" />
-            </Button>
-            <Button
-              onClick={handleCopy}
-              variant="secondary"
-              className="bg-gray-700 px-3 rounded-full hover:bg-gray-600"
-              disabled={!text}
-            >
-              {copied ? (
-                <Check className="h-4 w-4" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-              {/* {copied ? "Copied!" : "Copy"} */}
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={handleClear}
+                    variant="ghost"
+                    className="text-gray-400 px-3 rounded-full"
+                    disabled={!text || isRecording}
+                  >
+                    <Eraser className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Clear Text</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={handleCopy}
+                    variant="secondary"
+                    className="bg-gray-700 px-3 rounded-full hover:bg-gray-600"
+                    disabled={!text}
+                  >
+                    {copied ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                    {/* {copied ? "Copied!" : "Copy"} */}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Copy Text</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
       </motion.div>
