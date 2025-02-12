@@ -255,11 +255,11 @@ export function PhysicianAssistant() {
   }, []);
 
   return (
-    <div className="max-w-3xl mt-[calc(100vh-50vh)] mx-auto ">
+    <div className="max-w-3xl  mx-auto ">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className=" rounded-lg outline-none pb-10 p-2 bg-gray-900  relative"
+        className=" rounded-lg shadow-xl outline-none pb-10 p-2 bg-gray-800  fixed bottom-4 left-72 right-72 z-10"
       >
         {/* <Textarea
             ref={textareaRef}
@@ -270,18 +270,18 @@ export function PhysicianAssistant() {
         {/* <Textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="bg-gray-900 min-h-[400px] max-h-[500px] text-gray-200 border-none focus-visible:ring-0"
+          className="bg-gray-800 min-h-[400px] max-h-[500px] text-gray-200 border-none focus-visible:ring-0"
           ref={textAreaRef}
           /> */}
         <textarea
-          className="p-4 pb-18 block rounded-lg w-full border-0 bg-gray-900  text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 focus-visible:no-underline outline-none"
+          className="p-4 pb-18 block rounded-lg w-full border-0 bg-gray-800  text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 focus-visible:no-underline outline-none"
           placeholder="Start recording or type your medical notes here..."
           value={text}
           onChange={(e) => setText(e.target.value)}
           ref={textAreaRef}
         ></textarea>
 
-        <div className="absolute bottom-px inset-x-px p-2 px-4 rounded-b-lg bg-gray-900 dark:bg-neutral-900 flex items-center justify-between gap-2 flex-wrap">
+        <div className="absolute bottom-px inset-x-px p-2 px-4 rounded-b-lg bg-gray-800 dark:bg-neutral-800 flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-2">
             <AnimatePresence mode="wait">
               {!isRecording ? (
@@ -315,7 +315,7 @@ export function PhysicianAssistant() {
                     onClick={handleStopRecording}
                     variant="destructive"
                     className={`px-3 rounded-full ${
-                      isRecording && !isPaused ? "animate-pulse" : ""
+                      isRecording && !isPaused ? "animate-pulse " : ""
                     }`}
                   >
                     <MicOff className="h-4 w-4" />
@@ -378,6 +378,15 @@ export function PhysicianAssistant() {
           className="mt-4 text-center text-sm text-gray-400"
         >
           {isPaused ? "Recording paused" : "Recording in progress..."}
+        </motion.div>
+      )}
+      {isProcessing && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-4 text-center text-sm text-gray-400"
+        >
+          {"Initializing..."}
         </motion.div>
       )}
     </div>
