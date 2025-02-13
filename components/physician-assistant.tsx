@@ -49,7 +49,7 @@ export function PhysicianAssistant() {
   useAutosizeTextArea({
     textAreaRef,
     triggerAutoSize: triggerAutoSize,
-    minHeight: 100,
+    minHeight: 220,
     maxHeight: 200,
   });
   const refs = useRef<DeepgramRefs>({
@@ -275,22 +275,10 @@ export function PhysicianAssistant() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className=" rounded-lg shadow-xl outline-none pb-10 p-2 bg-gray-800  fixed bottom-4 left-72 right-72 z-10"
+        className="rounded-lg shadow-xl outline-none h-[250px] pb-10 p-2 bg-gray-800 fixed bottom-4 left-4 right-4 md:left-16 md:right-16 lg:left-72 lg:right-72 z-10 mx-auto"
       >
-        {/* <Textarea
-            ref={textareaRef}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            className="max-h-[200px] relative resize-none bg-transparent border-none focus-visible:ring-0 text-gray-200 overflow-hidden"
-            /> */}
-        {/* <Textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          className="bg-gray-800 min-h-[400px] max-h-[500px] text-gray-200 border-none focus-visible:ring-0"
-          ref={textAreaRef}
-          /> */}
         <textarea
-          className="p-4 pb-18 block rounded-lg w-full border-0 bg-gray-800  text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 focus-visible:no-underline outline-none"
+          className="p-4 block rounded-lg w-full border-0 bg-gray-800 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 focus-visible:no-underline outline-none"
           placeholder="Start recording or type your medical notes here..."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -415,7 +403,6 @@ export function PhysicianAssistant() {
                     ) : (
                       <Copy className="h-4 w-4" />
                     )}
-                    {/* {copied ? "Copied!" : "Copy"} */}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Copy Text</TooltipContent>
