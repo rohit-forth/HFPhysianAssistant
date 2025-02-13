@@ -134,6 +134,7 @@ export function PhysicianAssistant() {
             type: "Configure",
             model: "nova-2-medical",
             language: "en-US",
+
             interim_results: true,
             utterance_end_ms: 1000,
           })
@@ -150,6 +151,11 @@ export function PhysicianAssistant() {
         setIsProcessing(false);
       };
 
+      setInterval(() => {
+        const keepAliveMsg = JSON.stringify({ type: "KeepAlive" });
+        socket.send(keepAliveMsg);
+        console.log("Sent KeepAlive message");
+      }, 3000);
       socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
         const transcript = data.channel?.alternatives?.[0]?.transcript || "";
