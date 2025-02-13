@@ -132,13 +132,11 @@ export function PhysicianAssistant() {
         socket.send(
           JSON.stringify({
             type: "Configure",
-            model: "nova-3",
+            model: "nova-2",
             language: "en-US",
-            smart_format: true,
+
             interim_results: true,
             utterance_end_ms: 1000,
-            vad_events: true,
-            endpointing: 500,
           })
         );
 
