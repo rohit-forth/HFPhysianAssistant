@@ -403,9 +403,9 @@ export function PhysicianAssistant() {
                       <Button
                         onClick={handleReset}
                         variant="destructive"
-                        className="bg-gray-700 rounded-full px-3 hover:bg-gray-600 ml-2"
+                        className="bg-gray-700 rounded-full px-2 hover:bg-gray-600 ml-2"
                       >
-                        <StopCircle className="h-4 w-4" />
+                        <StopCircle className="h-5 w-6" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>End Conversion</TooltipContent>
