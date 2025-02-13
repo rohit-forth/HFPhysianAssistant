@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import { ToastProvider } from "@/components/ui/toast";
+import { DeepgramContextProvider } from "./context/DeepgramContextProvider";
+import { MicrophoneContextProvider } from "./context/MicrophoneContextProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,7 +23,9 @@ export default function RootLayout({
         suppressHydrationWarning
         className={inter.className + " overflow-hidden"}
       >
-        {children}
+        <DeepgramContextProvider>
+          <MicrophoneContextProvider>{children}</MicrophoneContextProvider>
+        </DeepgramContextProvider>
         <Toaster />
       </body>
     </html>
