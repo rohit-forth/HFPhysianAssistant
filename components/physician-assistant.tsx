@@ -408,7 +408,7 @@ export function PhysicianAssistant() {
                         <StopCircle className="h-5 w-6" />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>End Conversion</TooltipContent>
+                    <TooltipContent>Stop Conversion</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               )}
