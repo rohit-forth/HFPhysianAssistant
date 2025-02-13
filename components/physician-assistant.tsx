@@ -155,7 +155,7 @@ export function PhysicianAssistant() {
         const keepAliveMsg = JSON.stringify({ type: "KeepAlive" });
         socket.send(keepAliveMsg);
         console.log("Sent KeepAlive message");
-      }, 3000);
+      }, 2500);
       socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
         const transcript = data.channel?.alternatives?.[0]?.transcript || "";
