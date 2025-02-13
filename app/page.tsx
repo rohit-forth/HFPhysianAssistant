@@ -1,7 +1,10 @@
 "use client";
 import { PhysicianAssistant } from "@/components/physician-assistant";
+import Visualizer from "./Visualizer";
+import { useMicrophone } from "./context/MicrophoneContextProvider";
 
 export default function Home() {
+  const { microphone } = useMicrophone();
   return (
     <div className=" bg-gradient-to-b h-[100vh] from-gray-900 to-gray-700 via-blue-900 text-white">
       <div className="mx-auto px-4 py-8">
@@ -13,6 +16,7 @@ export default function Home() {
             Advanced speech-to-text transcription for medical professionals.
             Capture your thoughts, notes, and patient interactions.
           </p>
+          {/* <div>{microphone && <Visualizer microphone={microphone} />}</div> */}
         </header>
         <PhysicianAssistant />
       </div>

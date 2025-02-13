@@ -217,12 +217,14 @@ export function PhysicianAssistant() {
       toast({
         title: "Recording paused",
         description: "Speech-to-text conversion has been paused.",
+        duration: 1000,
       });
     } else if (microphoneState === MicrophoneState.Paused) {
       resumeMicrophone();
       toast({
         title: "Recording resumed",
         description: "Speech-to-text conversion has been resumed.",
+        duration: 1000,
       });
     }
   };
@@ -231,16 +233,18 @@ export function PhysicianAssistant() {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), 1000);
       toast({
         title: "Copied!",
         description: "Text has been copied to clipboard.",
+        duration: 1000,
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to copy text. Please try again.",
         variant: "destructive",
+        duration: 1000,
       });
     }
   };
@@ -284,7 +288,6 @@ export function PhysicianAssistant() {
   };
 
   const handleReset = () => {
-    setText("");
     handleStopRecording();
     toast({
       title: "Reset complete",
@@ -300,7 +303,7 @@ export function PhysicianAssistant() {
       case "processing":
         return <Loader2 className="h-4 w-4 animate-spin" />;
       case "recording":
-        return <StopCircle className="h-5 w-6" />;
+        return <Pause className="h-4 w-6" />;
       case "paused":
         return <Play className="h-4 w-4" />;
       default:
@@ -310,6 +313,7 @@ export function PhysicianAssistant() {
   const handleMainButtonClick = async () => {
     switch (recordingState) {
       case "idle":
+        setText("");
         setRecordingState("processing");
         setError(null);
         try {
@@ -392,7 +396,7 @@ export function PhysicianAssistant() {
                 </Tooltip>
               </TooltipProvider>
 
-              {isRecording && (
+              {recordingState !== "idle" && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
@@ -401,7 +405,7 @@ export function PhysicianAssistant() {
                         variant="destructive"
                         className="bg-gray-700 rounded-full px-3 hover:bg-gray-600 ml-2"
                       >
-                        <MicOff className="h-4 w-4" />
+                        <StopCircle className="h-4 w-4" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>End Conversion</TooltipContent>
@@ -476,8 +480,8 @@ export function PhysicianAssistant() {
                 <TooltipTrigger>
                   <Button
                     onClick={handleCopy}
-                    variant="secondary"
-                    className="bg-gray-700 px-3 rounded-full hover:bg-gray-600"
+                    variant="ghost"
+                    className="text-gray-400 px-3 rounded-full"
                     disabled={!text}
                   >
                     {copied ? (
