@@ -254,6 +254,7 @@ export function PhysicianAssistant() {
     toast({
       title: "Cleared",
       description: "Text has been cleared.",
+      duration: 1000,
     });
   };
 
@@ -284,6 +285,7 @@ export function PhysicianAssistant() {
     toast({
       title: "Recording stopped",
       description: "Speech-to-text conversion has been stopped.",
+      duration: 1000,
     });
   };
 
@@ -291,7 +293,8 @@ export function PhysicianAssistant() {
     handleStopRecording();
     toast({
       title: "Reset complete",
-      description: "Recording stopped and text cleared.",
+      description: "Recording stopped.",
+      duration: 1000,
     });
   };
 
@@ -318,6 +321,7 @@ export function PhysicianAssistant() {
         setError(null);
         try {
           await handleStartStopRecording();
+
           setRecordingState("recording");
         } catch (err) {
           setRecordingState("idle");
@@ -330,6 +334,7 @@ export function PhysicianAssistant() {
         toast({
           title: "Recording paused",
           description: "Click resume to continue recording.",
+          duration: 1000,
         });
         break;
       case "paused":
@@ -338,6 +343,7 @@ export function PhysicianAssistant() {
         toast({
           title: "Recording resumed",
           description: "Speech-to-text conversion resumed.",
+          duration: 1000,
         });
         break;
     }

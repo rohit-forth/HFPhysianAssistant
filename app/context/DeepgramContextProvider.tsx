@@ -90,6 +90,7 @@ const DeepgramContextProvider: FunctionComponent<
         toast({
           title: "Connected",
           description: "Successfully connected to speech service",
+          duration: 1000,
         });
       });
 
@@ -105,6 +106,7 @@ const DeepgramContextProvider: FunctionComponent<
           title: "Connection Error",
           description: "Speech service connection error. Please try again.",
           variant: "destructive",
+          duration: 1000,
         });
       });
 

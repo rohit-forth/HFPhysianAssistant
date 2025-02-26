@@ -83,6 +83,7 @@ const MicrophoneContextProvider: React.FC<MicrophoneContextProviderProps> = ({
         title: "Error",
         description: "Failed to set up microphone. Please check permissions.",
         variant: "destructive",
+        duration: 1500,
       });
       throw err;
     }
