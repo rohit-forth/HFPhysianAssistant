@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     // Replace this with your actual Deepgram API key
-    const apiKey = "d3ec5b8d86c1f5ff95bc89aee2aad135eb8b059f";
+    const apiKey = process.env.NEXT_PUBLIC_DEEPGRAM_KEY;
 
     if (!apiKey) {
       return NextResponse.json(
